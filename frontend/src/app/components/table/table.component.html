@@ -1,0 +1,498 @@
+<div tuiTextfieldSize="m" class="filters" *ngIf="!(loadingError$ | async)">
+    <tui-input class="input tui-space_right-3" [tuiTextfieldCleaner]="true" [(ngModel)]="search">Поиск на странице
+    </tui-input>
+    <button icon="tuiIconPlusCircleLarge" tuiIconButton size="m" class="tui-space_right-3" tuiSlot="right"
+            (click)="createLicense(createTemplate)"></button>
+    <button icon="tuiIconCheckSquareLarge" tuiIconButton size="m" class="tui-space_right-3" tuiSlot="right"
+            (click)="checkLicense(checkTemplate)"></button>
+    <form [formGroup]="form" class="form">
+        <tui-filter class="tui-space_right-3" formControlName="active" size="m" [content]="active"
+                    [items]="activeItems"></tui-filter>
+        <tui-filter class="tui-space_right-3" formControlName="real" size="m" [content]="real"
+                    [items]="realItems"></tui-filter>
+    </form>
+    <ng-template #active>
+        <tui-svg src="tuiIconActivityLarge" class="tui-space_right-3"></tui-svg>
+        Активные
+    </ng-template>
+    <ng-template #real>
+        <tui-svg src="tuiIconAwardLarge" class="tui-space_right-4"></tui-svg>
+        Боевые
+    </ng-template>
+    <tui-hosted-dropdown [content]="dropdown">
+        <button size="m" tuiButton type="button" [iconRight]="arrow">Столбцы</button>
+        <ng-template #dropdown>
+            <tui-reorder class="columns" [enabled]="enabled" [(items)]="initial"
+                         (enabledChange)="onEnabled($event)"></tui-reorder>
+        </ng-template>
+    </tui-hosted-dropdown>
+</div>
+
+<tui-loader [overlay]="true" [showLoader]="!!(loading$ | async)" class="tui-space_top-8" *ngIf="!(loadingError$ | async)">
+    <table *ngIf="data$ | async as data" tuiTable class="table" [columns]="columns"
+           [direction]="(direction$ | async) || 1"
+           [tuiSortBy]="sorter$ | async" (directionChange)="direction$.next($event)"
+           (tuiSortByChange)="sorter$.next($event!)">
+        <thead>
+        <tr tuiThGroup>
+            <th *tuiHead="'licenseNumber'" tuiSortable tuiTh>Номер</th>
+            <th *tuiHead="'dateOfIssue'" tuiSortable tuiTh>Дата выпуска</th>
+            <th *tuiHead="'dateOfExpiry'" tuiSortable tuiTh>Срок действия</th>
+            <th *tuiHead="'issuedBy'" tuiSortable tuiTh>Автор</th>
+            <th *tuiHead="'issuedTo'" tuiSortable tuiTh>Получатель</th>
+            <th *tuiHead="'isTest'" tuiSortable tuiTh>Признак</th>
+            <th *tuiHead="'actions'" tuiTh [sorter]="null"></th>
+        </tr>
+        </thead>
+        <tbody *tuiLet="data | tuiTableSort as sortedData" tuiTbody [data]="sortedData">
+        <tr *ngFor="let license of sortedData" tuiTr [ngClass]="license.dateOfExpiry > TODAY ? 'active' : 'expired'">
+            <td *tuiCell="'licenseNumber'" tuiTd
+                [class.match]="isMatch(license.dateOfExpiry)">{{ license.licenseNumber }}
+            </td>
+            <td *tuiCell="'dateOfIssue'" tuiTd
+                [class.match]="isMatch(license.dateOfIssue)">{{ license.dateOfIssue }}</td>
+            <td *tuiCell="'dateOfExpiry'" tuiTd
+                [class.match]="isMatch(license.dateOfExpiry)">{{ license.dateOfExpiry }}</td>
+            <td *tuiCell="'issuedBy'" tuiTd [class.match]="isMatch(license.issuedBy)">{{ license.issuedBy }}</td>
+            <td *tuiCell="'issuedTo'" tuiTd [class.match]="isMatch(license.issuedTo)">{{ license.issuedTo }}</td>
+            <td *tuiCell="'isTest'" tuiTd>
+                <div [class]="license.isTest ? 'test' : 'real'">{{ license.isTest ? 'Тестовая' : 'Боевая' }}</div>
+            </td>
+            <td *tuiCell="'actions'" tuiTd class="actions">
+                <tui-hosted-dropdown [content]="menuTemplate">
+                    <button appearance="flat" iconRight="tuiIconMoreHorizontal" size="s" shape="rounded" tuiIconButton
+                            type="button" [iconRight]="arrow"></button>
+                </tui-hosted-dropdown>
+                <ng-template #menuTemplate let-close="close">
+                    <tui-data-list role="menu" tuiDataListDropdownManager class="context-menu">
+                        <button tuiOption (click)="close(); getMoreInfo(infoTemplate, license)">
+                            Информация
+                            <tui-svg class="icon" src="tuiIconEye"></tui-svg>
+                        </button>
+                        <button tuiOption (click)="close(); updateLicense(updateTemplate, license)">
+                            Продлить
+                            <tui-svg class="icon" src="tuiIconFastForward"></tui-svg>
+                        </button>
+                        <button tuiOption (click)="close(); delete(license)">
+                            Удалить
+                            <tui-svg class="icon" src="tuiIconDelete"></tui-svg>
+                        </button>
+                        <button tuiOption (click)="close(); downloadLicense(license)">
+                            Лицензия
+                            <tui-svg class="icon" src="tuiIconDownload"></tui-svg>
+                        </button>
+                        <button tuiOption (click)="close(); downloadOpenedKey(license)">
+                            Открытый ключ
+                            <tui-svg class="icon" src="tuiIconChevronsDown"></tui-svg>
+                        </button>
+                    </tui-data-list>
+                </ng-template>
+            </td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td [colSpan]="columns.length">
+                <tui-table-pagination
+                        class="tui-space_top-2"
+                        [total]="(total$ | async) || 0"
+                        (pageChange)="onPage($event)"
+                        (sizeChange)="onSize($event)"
+                ></tui-table-pagination>
+            </td>
+        </tr>
+        </tfoot>
+    </table>
+</tui-loader>
+
+<tui-block-status class="card" [card]="true" *ngIf="loadingError$ | async">
+    <img alt="hidden content" src="/assets/cancel.svg" tuiSlot="top" class="image"/>
+    Упс, что-то пошло не так...
+</tui-block-status>
+
+<ng-template #infoTemplate let-observer>
+    <div class="inline">
+        <button tuiAction type="button" class="no-shadow">
+            <section>
+                <h3 class="header tui-text_body-l">Идентификатор</h3>
+                <p class="description tui-text_body-m">{{ currentLicense?.id }}</p>
+            </section>
+        </button>
+    </div>
+    @if (currentLicense?.previousLicense) {
+    <div class="inline">
+      <button tuiAction type="button" class="no-shadow">
+        <section>
+          <h3 class="header tui-text_body-l">Предыдущий идентификатор</h3>
+          <p class="description tui-text_body-m">{{ currentLicense?.previousLicense }}</p>
+        </section>
+      </button>
+    </div>
+    }
+    <div class="inline">
+        <button tuiAction type="button" class="no-shadow">
+            <section>
+                <h3 class="header tui-text_body-l">Номер</h3>
+                <p class="description tui-text_body-m">{{ currentLicense?.licenseNumber }}</p>
+            </section>
+        </button>
+        <button tuiAction type="button" class="no-shadow">
+            <section>
+                <h3 class="header tui-text_body-l">Признак</h3>
+                <div [class]="currentLicense!.isTest ? 'test' : 'real'" class="description tui-text_body-m">
+                    {{ currentLicense!.isTest ? 'Тестовая' : 'Боевая' }}
+                </div>
+            </section>
+        </button>
+    </div>
+    <div class="inline">
+        <button tuiAction type="button" class="no-shadow">
+            <section>
+                <h3 class="header tui-text_body-l">Дата выпуска</h3>
+                <p class="description tui-text_body-m">{{ currentLicense?.dateOfIssue }}</p>
+            </section>
+        </button>
+        <button tuiAction type="button" class="no-shadow">
+            <section>
+                <h3 class="header tui-text_body-l">Срок действия</h3>
+                <p class="description tui-text_body-m">{{ currentLicense?.dateOfExpiry }}</p>
+            </section>
+            @if (currentLicense!.dateOfExpiry > TODAY) {
+            <tui-marker-icon size="s" src="tuiIconThumbsUpLarge" class="tui-island__marker positive"></tui-marker-icon>
+            } @else {
+            <tui-marker-icon size="s" src="tuiIconThumbsDownLarge" class="tui-island__marker negative"></tui-marker-icon>
+            }
+        </button>
+    </div>
+    <div class="inline">
+        <button tuiAction type="button" class="no-shadow">
+            <section>
+                <h3 class="header tui-text_body-l">Автор</h3>
+                <p class="description tui-text_body-m">{{ currentLicense?.issuedBy }}</p>
+            </section>
+        </button>
+        <button tuiAction type="button" class="no-shadow">
+            <section>
+                <h3 class="header tui-text_body-l">Получатель</h3>
+                <p class="description tui-text_body-m">{{ currentLicense?.issuedTo }}</p>
+            </section>
+        </button>
+    </div>
+    <button tuiAction type="button" class="no-shadow">
+        <section>
+            <h3 class="header tui-text_body-l">Организации</h3>
+            <p class="description tui-text_body-m" *ngFor="let orgInfo of currentLicense?.organizations">
+                <tui-badge class="tui-space_top-3" size="l"
+                           value="ИНН:{{orgInfo.inn}}, КПП:{{orgInfo.kpp}}"></tui-badge>
+            </p>
+        </section>
+    </button>
+    <div class="inline">
+        <tui-island>
+            <h3 class="tui-island__title">Комментарий</h3>
+            <p class="tui-island__paragraph">
+                <tui-scrollbar class="box">
+                    {{ currentLicense?.comment }}
+                </tui-scrollbar>
+            </p>
+        </tui-island>
+    </div>
+</ng-template>
+
+<ng-template #updateTemplate let-observer>
+    <form class="b-form tui-space_top-6" [formGroup]="updateLicenseForm"
+          (ngSubmit)="updateLicenseSubmit(); observer.complete()">
+        <div class="tui-form__row">
+            <tui-input-date [min]="TOMORROW" formControlName="newExpireDate" tuiTextfieldSize="l"
+                            [tuiTextfieldCleaner]="true">
+                Срок действия<span class="tui-required">
+    </span></tui-input-date>
+            <tui-error formControlName="newExpireDate" [error]="[] | tuiFieldError | async"></tui-error>
+        </div>
+        <div class="tui-form__row">
+            <tui-input-files *ngIf="!updateLicenseForm.controls.newPrivateKey.value" [link]="'Закрытый ключ'"
+                             [label]="' '"
+                             [accept]="'.Key'" formControlName="newPrivateKey"></tui-input-files>
+            <tui-files class="tui-space_top-1">
+                <tui-file *ngIf="loadedUpdatePrivateKey | async as file" [file]="file"
+                          [showDelete]="updateLicenseForm.controls.newPrivateKey.enabled"
+                          (removed)="removeFile(updateLicenseForm.controls.newPrivateKey)"
+                ></tui-file>
+                <tui-file *ngIf="loadingUpdatePrivateKey | async as file" state="loading" [file]="file"
+                          [showDelete]="updateLicenseForm.controls.newPrivateKey.enabled"
+                ></tui-file>
+            </tui-files>
+            <tui-error formControlName="newPrivateKey" [error]="[] | tuiFieldError | async"></tui-error>
+        </div>
+        <div class="tui-form__buttons">
+            <button class="tui-form__button" size="m" tuiButton type="submit" [disabled]="updateLicenseForm.invalid">
+                Продлить
+            </button>
+            <button appearance="flat" size="m" tuiButton type="button" class="tui-form__button"
+                    (click)="observer.complete()">
+                Отмена
+            </button>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template #createTemplate let-observer>
+    <form class="b-form tui-space_top-6" [formGroup]="createLicenseForm"
+          (ngSubmit)="createNewLicense(); observer.complete()">
+        <div class="tui-form__row">
+            <tui-combo-box [stringify]="stringifyLicenseType" formControlName="licenseType" tuiTextfieldSize="m">
+                Выберите тип лицензии
+                <input tuiTextfield/>
+                <ng-container *tuiDataList>
+                    <tui-data-list>
+                        <button *ngFor="let licenseType of licenseTypes | tuiFilterByInputWith: stringifyLicenseType"
+                                tuiOption
+                                [disabled]="licenseType.disabled" [value]="licenseType">
+                            {{ stringifyLicenseType(licenseType) }}
+                        </button>
+                    </tui-data-list>
+                </ng-container>
+            </tui-combo-box>
+            <tui-error formControlName="licenseType" [error]="[] | tuiFieldError | async"></tui-error>
+        </div>
+        <div class="tui-form__row">
+            <tui-input-date [min]="TOMORROW" formControlName="expireDate" tuiTextfieldSize="m"
+                            [tuiTextfieldCleaner]="true">
+                Срок действия<span class="tui-required">
+        </span></tui-input-date>
+            <tui-error formControlName="expireDate" [error]="[] | tuiFieldError | async"></tui-error>
+        </div>
+        <div class="tui-form__row">
+            <tui-input formControlName="issuedTo" tuiTextfieldSize="m">Получатель<input tuiTextfield/><span
+                    class="tui-required"></span>
+            </tui-input>
+            <tui-error formControlName="issuedTo" [error]="[] | tuiFieldError | async"></tui-error>
+        </div>
+        <div class="tui-form__row">
+            <tui-input formControlName="issuedBy" tuiTextfieldSize="m">Автор<input tuiTextfield/><span
+                    class="tui-required"></span></tui-input>
+            <tui-error formControlName="issuedBy" [error]="[] | tuiFieldError | async"></tui-error>
+        </div>
+        <form class="b-form tui-space_top-6" [formGroup]="innKppGroup" (ngSubmit)="addOrgInfoToNewLicense()">
+            <div class="tui-form__row tui-form__row_multi-fields">
+                <div class="tui-form__multi-field">
+                    <tui-input tuiTextfieldSize="m" formControlName="inn" [tuiTextfieldCleaner]="true">ИНН</tui-input>
+                </div>
+                <div class="tui-form__multi-field">
+                    <tui-input tuiTextfieldSize="m" formControlName="kpp" [tuiTextfieldCleaner]="true">КПП</tui-input>
+                </div>
+                <button icon="tuiIconPlus" tuiIconButton size="m" tuiSlot="right" type="submit" class="tui-space_left-2"
+                        [disabled]="innKppGroup.invalid"></button>
+            </div>
+        </form>
+        <div class="tui-form__row">
+            <tui-tag *ngFor="let tag of tags; let index = index;" size="l" status="custom" class="tag tui-space_top-1"
+                     tuiTag
+                     [hoverable]="true" [removable]="true" [value]="stringifyTag(tag)"
+                     (edited)="handleTagEdited(index)">
+            </tui-tag>
+        </div>
+        <div tuiGroup class="tui-form__row" [adaptive]="true" [collapsed]="true">
+            <tui-radio-block contentAlign="right" formControlName="isTestLicense" item="test" size="m">
+                Тестовая
+            </tui-radio-block>
+            <tui-radio-block contentAlign="right" formControlName="isTestLicense" item="real" size="m">
+                Боевая
+            </tui-radio-block>
+        </div>
+        <div class="tui-form__row">
+            <tui-input-files *ngIf="!createLicenseForm.controls.privateKey.value" [link]="'Закрытый ключ'" [label]="' '"
+                             size="m" formControlName="privateKey"></tui-input-files>
+            <tui-files class="tui-space_top-1">
+                <tui-file *ngIf="loadedCreatePrivateKey | async as file" [file]="file"
+                          [showDelete]="createLicenseForm.controls.privateKey.enabled"
+                          (removed)="removeFile(createLicenseForm.controls.privateKey)"></tui-file>
+                <tui-file *ngIf="loadingCreatePrivateKey | async as file" state="loading" [file]="file"
+                          [showDelete]="createLicenseForm.controls.privateKey.enabled"></tui-file>
+            </tui-files>
+            <tui-error formControlName="privateKey" [error]="[] | tuiFieldError | async"></tui-error>
+            <tui-input-files *ngIf="!createLicenseForm.controls.publicKey.value" [link]="'Открытый ключ'" [label]="' '"
+                             size="m" [accept]="'.Key'" formControlName="publicKey"></tui-input-files>
+            <tui-files class="tui-space_top-1">
+                <tui-file *ngIf="loadedCreatePublicKey | async as file" [file]="file"
+                          [showDelete]="createLicenseForm.controls.publicKey.enabled"
+                          (removed)="removeFile(createLicenseForm.controls.publicKey)"></tui-file>
+                <tui-file *ngIf="loadingCreatePublicKey | async as file" state="loading" [file]="file"
+                          [showDelete]="createLicenseForm.controls.publicKey.enabled"></tui-file>
+            </tui-files>
+            <tui-error formControlName="publicKey" [error]="[] | tuiFieldError | async"></tui-error>
+        </div>
+        <div class="tui-form__row">
+            <tui-textarea formControlName="comment">Комментарий</tui-textarea>
+        </div>
+        <div class="tui-form__buttons">
+            <button class="tui-form__button" size="m" tuiButton type="submit" [disabled]="createLicenseForm.invalid">
+                Создать
+            </button>
+            <button appearance="flat" size="m" tuiButton type="button" class="tui-form__button"
+                    (click)="observer.complete()">
+                Отмена
+            </button>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template #checkTemplate let-observer>
+    <form class="b-form tui-space_top-6" [formGroup]="checkLicenseForm"
+          (ngSubmit)="checkLicenseSubmit(checkLicenseTemplate); observer.complete()">
+        <div class="tui-form__row">
+            <tui-combo-box [stringify]="stringifyLicenseType" formControlName="licenseType" tuiTextfieldSize="m">
+                Выберите тип лицензии
+                <input tuiTextfield/>
+                <ng-container *tuiDataList>
+                    <tui-data-list>
+                        <button *ngFor="let licenseType of licenseTypes | tuiFilterByInputWith: stringifyLicenseType"
+                                tuiOption
+                                [disabled]="licenseType.disabled" [value]="licenseType">
+                            {{ stringifyLicenseType(licenseType) }}
+                        </button>
+                    </tui-data-list>
+                </ng-container>
+            </tui-combo-box>
+            <tui-error formControlName="licenseType" [error]="[] | tuiFieldError | async"></tui-error>
+        </div>
+        <div class="tui-form__row">
+            <tui-input-files *ngIf="!checkLicenseForm.controls.licenseFile.value" [link]="'Файл лицензии'" [label]="' '"
+                             size="m" formControlName="licenseFile"></tui-input-files>
+            <tui-files class="tui-space_top-1">
+                <tui-file *ngIf="loadedCheckLicense | async as file" [file]="file"
+                          [showDelete]="checkLicenseForm.controls.licenseFile.enabled"
+                          (removed)="removeFile(checkLicenseForm.controls.licenseFile)"></tui-file>
+                <tui-file *ngIf="loadingCheckLicense | async as file" state="loading" [file]="file"
+                          [showDelete]="checkLicenseForm.controls.licenseFile.enabled"></tui-file>
+            </tui-files>
+            <tui-error formControlName="publicKey" [error]="[] | tuiFieldError | async"></tui-error>
+            <tui-input-files *ngIf="!checkLicenseForm.controls.publicKey.value" [link]="'Открытый ключ'" [label]="' '"
+                             size="m" [accept]="'.Key'" formControlName="publicKey"></tui-input-files>
+            <tui-files class="tui-space_top-1">
+                <tui-file *ngIf="loadedCheckPublicKey | async as file" [file]="file"
+                          [showDelete]="checkLicenseForm.controls.publicKey.enabled"
+                          (removed)="removeFile(checkLicenseForm.controls.publicKey)"></tui-file>
+                <tui-file *ngIf="loadingCheckPublicKey | async as file" state="loading" [file]="file"
+                          [showDelete]="checkLicenseForm.controls.publicKey.enabled"></tui-file>
+            </tui-files>
+            <tui-error formControlName="publicKey" [error]="[] | tuiFieldError | async"></tui-error>
+        </div>
+        <div class="tui-form__buttons">
+            <button class="tui-form__button" size="m" tuiButton type="submit" [disabled]="checkLicenseForm.invalid">
+                Проверить
+            </button>
+            <button appearance="flat" size="m" tuiButton type="button" class="tui-form__button"
+                    (click)="observer.complete()">
+                Отмена
+            </button>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template #checkLicenseTemplate let-observer>
+    <div class="inline">
+        <button tuiAction type="button" class="no-shadow">
+            <section>
+                <h3 class="header tui-text_body-l">Идентификатор</h3>
+                <p class="description tui-text_body-m">{{ decryptedLicense?.decryptedLicense?.id }}</p>
+            </section>
+        </button>
+    </div>
+    <div class="inline">
+        <button tuiAction type="button" class="no-shadow">
+            <section>
+                <h3 class="header tui-text_body-l">Номер</h3>
+                <p class="description tui-text_body-m">{{ decryptedLicense?.decryptedLicense?.licenseNumber }}</p>
+            </section>
+        </button>
+        <button tuiAction type="button" class="no-shadow">
+            <section>
+                <h3 class="header tui-text_body-l">Признак</h3>
+                <div [class]="decryptedLicense?.decryptedLicense?.isTest ? 'test' : 'real'"
+                     class="description tui-text_body-m">
+                    {{ decryptedLicense?.decryptedLicense?.isTest ? 'Тестовая' : 'Боевая' }}
+                </div>
+            </section>
+        </button>
+    </div>
+    <div class="inline">
+        <button tuiAction type="button" class="no-shadow">
+            <section>
+                <h3 class="header tui-text_body-l">Дата выпуска</h3>
+                <p class="description tui-text_body-m">{{ decryptedLicense?.decryptedLicense?.dateOfIssue }}</p>
+            </section>
+        </button>
+        <button tuiAction type="button" class="no-shadow">
+            <section>
+                <h3 class="header tui-text_body-l">Срок действия</h3>
+                <p class="description tui-text_body-m">{{ decryptedLicense?.decryptedLicense?.dateOfExpiry }}</p>
+            </section>
+            @if (decryptedLicense?.decryptedLicense!.dateOfExpiry > TODAY) {
+            <tui-marker-icon size="s" src="tuiIconThumbsUpLarge" class="tui-island__marker positive"></tui-marker-icon>
+            } @else {
+            <tui-marker-icon size="s" src="tuiIconThumbsDownLarge" class="tui-island__marker negative"></tui-marker-icon>
+            }
+        </button>
+    </div>
+    <div class="inline">
+        <button tuiAction type="button" class="no-shadow">
+            <section>
+                <h3 class="header tui-text_body-l">Автор</h3>
+                <p class="description tui-text_body-m">{{ decryptedLicense?.decryptedLicense?.issuedBy }}</p>
+            </section>
+        </button>
+        <button tuiAction type="button" class="no-shadow">
+            <section>
+                <h3 class="header tui-text_body-l">Получатель</h3>
+                <p class="description tui-text_body-m">{{ decryptedLicense?.decryptedLicense?.issuedTo }}</p>
+            </section>
+        </button>
+    </div>
+    <div class="inline">
+        <button tuiAction type="button" class="no-shadow">
+            <section>
+                <h3 class="header tui-text_body-l">Версия</h3>
+                <div class="description tui-text_body-m">{{ decryptedLicense?.decryptedLicense?.version }}</div>
+            </section>
+        </button>
+        <button tuiAction type="button" class="no-shadow">
+            <section>
+                <h3 class="header tui-text_body-l">Шифрование</h3>
+                <p class="description tui-text_body-m">{{ decryptedLicense?.decryptedLicense?.signatureDigest }}</p>
+            </section>
+        </button>
+    </div>
+    <div class="inline">
+        <tui-island>
+            <h3 class="tui-island__title">Сигнатура</h3>
+            <p class="tui-island__paragraph">
+                <tui-scrollbar class="box">
+                    {{ decryptedLicense?.decryptedLicense?.licenseSignature }}
+                </tui-scrollbar>
+            </p>
+        </tui-island>
+    </div>
+    <button tuiAction type="button" class="no-shadow">
+        <section>
+            <h3 class="header tui-text_body-l">Организации</h3>
+            <p class="description tui-text_body-m"
+               *ngFor="let orgInfo of decryptedLicense?.decryptedLicense?.organizations">
+                <tui-badge class="tui-space_top-3" size="l"
+                           value="ИНН:{{orgInfo.inn}}, КПП:{{orgInfo.kpp}}"></tui-badge>
+            </p>
+        </section>
+    </button>
+    @if (decryptedLicense?.decryptedLicense?.comment) {
+    <div class="inline">
+          <tui-island>
+              <h3 class="tui-island__title">Комментарий</h3>
+              <p class="tui-island__paragraph">
+                  <tui-scrollbar class="box">
+                        {{ decryptedLicense?.decryptedLicense?.comment }}
+                  </tui-scrollbar>
+                </p>
+            </tui-island>
+    </div>
+    }
+</ng-template>

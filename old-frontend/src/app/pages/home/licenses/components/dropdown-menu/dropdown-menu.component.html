@@ -1,0 +1,11 @@
+<button mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>more_vert</mat-icon>
+</button>
+<mat-menu #menu="matMenu">
+    <ng-container *ngFor="let item of params.dropdownData; let i = index">
+        <button *ngIf="isFileExists(item)" (click)="onClick($event, i)" mat-menu-item>
+            <mat-icon>{{item.icon}}</mat-icon>
+            <label *ngIf="item?.label">{{item.label}}</label>
+        </button>
+    </ng-container>
+</mat-menu>

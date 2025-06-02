@@ -1,0 +1,42 @@
+<div class="registration-container">
+    <div class="container mat-elevation-z8 registration-content">
+        <h2>Регистрация</h2>
+        <form (ngSubmit)="registration(registerForm.value)" [formGroup]="registerForm">
+
+            <mat-form-field class="full-width">
+                <input [errorStateMatcher]="matcher" formControlName="username" matInput placeholder="Логин"
+                       type="username">
+
+                <mat-error>
+                    <span *ngIf="!registerForm.get('username').valid && registerForm.get('username').touched">
+                      Пожалуйста введите логин
+                    </span>
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="full-width">
+                <input [errorStateMatcher]="matcher" formControlName="password" matInput placeholder="Пароль"
+                       type="password">
+
+                <mat-error>
+                  <span *ngIf="!registerForm.get('password').valid && registerForm.get('password').touched">
+                    Пожалуйста введите пароль
+                  </span>
+                </mat-error>
+            </mat-form-field>
+
+            <mat-progress-bar *ngIf="authFacade.isUpdating$() | async" mode="indeterminate"></mat-progress-bar>
+
+            <div class="button-row">
+                <button [disabled]="!registerForm.valid" color="primary" mat-flat-button class="app-button" type="submit">
+                    Зарегистрироваться
+                </button>
+            </div>
+
+            <div class="login-link">
+                <a mat-button [routerLink]="['/auth/login']">Вход</a>
+            </div>
+        </form>
+    </div>
+</div>
+

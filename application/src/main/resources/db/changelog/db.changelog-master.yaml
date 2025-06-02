@@ -1,0 +1,204 @@
+databaseChangeLog:
+  - logicalFilePath: db/changelog/db.changelog-master.yaml
+  - changeSet:
+      id: 1
+      author: eyakimov
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: true
+              - column:
+                  name: username
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: password
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: is_locked
+                  type: boolean
+                  constraints:
+                    nullable: true
+  - changeSet:
+      id: 2
+      author: eyakimov
+      changes:
+        - createTable:
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: true
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  value: '7f2bb7de-39d2-4d7c-bb21-7c5bb48d3a05'
+              - column:
+                  name: name
+                  value: 'ROLE_USER'
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  value: '6cb00aff-6914-4627-acd2-0fed7353e7d5'
+              - column:
+                  name: name
+                  value: 'ROLE_ADMIN'
+  - changeSet:
+      id: 3
+      author: eyakimov
+      changes:
+        - createTable:
+            tableName: user_role
+            columns:
+              - column:
+                  name: user_id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: user_role_user
+                    references: users(id)
+                    deleteCascade: true
+                    nullable: true
+              - column:
+                  name: role_id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: user_role_role
+                    references: role(id)
+                    deleteCascade: true
+                    nullable: true
+  - changeSet:
+      id: 4
+      author: eyakimov
+      changes:
+        - createTable:
+            tableName: license_meta
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: true
+              - column:
+                  name: date_of_expiry
+                  type: timestamp
+                  constraints:
+                    nullable: true
+              - column:
+                  name: date_of_issue
+                  type: timestamp
+                  constraints:
+                    nullable: true
+              - column:
+                  name: license_type
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: previous_license
+                  type: uuid
+                  constraints:
+                    nullable: true
+              - column:
+                  name: user_id
+                  type: uuid
+                  constraints:
+                    foreignKeyName: fk_license_meta_user
+                    references: users(id)
+                    deleteCascade: true
+                    nullable: true
+  - changeSet:
+      id: 5
+      author: eyakimov
+      changes:
+        - createTable:
+            tableName: license_property
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: true
+              - column:
+                  name: key
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: value
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: license_meta_id
+                  type: uuid
+                  constraints:
+                    foreignKeyName: fk_license_properties_license_meta
+                    references: license_meta(id)
+                    deleteCascade: true
+                    nullable: true
+  - changeSet:
+      id: 6
+      author: eyakimov
+      changes:
+        - createTable:
+            tableName: license_file
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: true
+              - column:
+                  name: data
+                  type: oid
+                  constraints:
+                    nullable: true
+              - column:
+                  name: file_type
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: file_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: data_type
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: license_meta_id
+                  type: uuid
+                  constraints:
+                    foreignKeyName: fk_file_license_meta
+                    references: license_meta(id)
+                    deleteCascade: true
+                    nullable: true

@@ -1,0 +1,14 @@
+<div mat-dialog-title>
+    <span>{{data.title || 'Подтверждение'}}</span>
+</div>
+<div class="dialog-content">
+    <perfect-scrollbar>
+        <mat-dialog-content>
+            {{data.message}}
+        </mat-dialog-content>
+    </perfect-scrollbar>
+</div>
+<mat-dialog-actions style="justify-content: space-around;">
+    <button (click)="yesClicked()" mat-button>Да</button>
+    <button (click)="noClicked()" mat-button>Нет</button>
+</mat-dialog-actions>

@@ -1,0 +1,127 @@
+@import '@taiga-ui/core/styles/taiga-ui-local.less';
+
+.table {
+  width: 100%;
+}
+
+.form {
+  display: flex;
+  justify-content: center;
+}
+
+.filters {
+  display: flex;
+}
+
+.input {
+  flex: 1;
+}
+
+.columns {
+  width: 10.625rem;
+}
+
+.match {
+  background: var(--tui-error-bg-hover) !important;
+}
+
+.test,
+.real {
+  display: flex;
+  align-items: center;
+  text-transform: capitalize;
+
+  &:before {
+    content: '';
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 100%;
+    margin-right: 0.5rem;
+    background: var(--tui-base-05);
+  }
+}
+
+.active {
+  td {
+    background: var(--tui-secondary);
+  }
+}
+
+.expired {
+  td {
+  }
+}
+
+
+.real:before {
+  background: var(--tui-success-fill);
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.no-shadow {
+  box-shadow: none;
+
+  &:hover {
+    box-shadow: none;
+  }
+}
+
+.header,
+.description {
+  margin: 0;
+}
+
+.header {
+  font-weight: bold;
+}
+
+.description {
+  color: var(--tui-text-02);
+}
+
+[tuiAction] {
+  flex: 1;
+  justify-content: start;
+  align-items: center;
+}
+
+.positive {
+  color: var(--tui-positive);
+  background: var(--tui-success-bg);
+}
+
+.negative {
+  color: var(--tui-negative);
+  background: var(--tui-error-bg);
+}
+
+.inline {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tag {
+  background-color: var(--tui-primary-hover);
+}
+
+tui-tag {
+  border-radius: var(--tui-radius-xl) !important;
+}
+
+.box {
+  width: 20rem;
+  height: 4rem;
+}
+
+.image {
+  width: 20rem;
+  height: 20rem;
+}
+

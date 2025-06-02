@@ -1,0 +1,33 @@
+<div *ngIf="page || page?.empty" class="ag-paging-panel ag-unselectable">
+    <span class="ag-paging-row-summary-panel">
+        <span class="ag-paging-row-summary-panel-number">{{page?.pageable?.offset + 1}}</span>
+        <span>to</span>
+        <span
+            class="ag-paging-row-summary-panel-number">{{page?.pageable?.offset + page?.numberOfElements}}</span>
+        <span>of</span>
+        <span class="ag-paging-row-summary-panel-number">{{page?.totalElements}}</span>
+    </span>
+
+    <span class="ag-paging-page-summary-panel">
+        <div class="ag-paging-button" [ngClass]="page?.first ? 'ag-disabled' : ''">
+            <span (click)="firstPage()" class="ag-icon ag-icon-first"></span>
+        </div>
+        <div class="ag-paging-button" [ngClass]="page?.first ? 'ag-disabled' : ''">
+            <span (click)="back()" class="ag-icon ag-icon-previous"></span>
+        </div>
+
+        <span class="ag-paging-description">
+            <span>Page</span>
+            <span class="ag-paging-number">{{page?.pageable?.pageNumber + 1}}</span>
+            <span>of</span>
+            <span class="ag-paging-number">{{page?.totalPages}}</span>
+        </span>
+
+        <div class="ag-paging-button" [ngClass]="page?.last ? 'ag-disabled' : ''">
+            <span (click)="next()" class="ag-icon ag-icon-next"></span>
+        </div>
+        <div class="ag-paging-button" [ngClass]="page?.last ? 'ag-disabled' : ''">
+            <span (click)="lastPage()" class="ag-icon ag-icon-last"></span>
+        </div>
+    </span>
+</div>

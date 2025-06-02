@@ -1,0 +1,25 @@
+@expired-license-color: rgba(255, 57, 0, 0.18);
+@license-without-expiry-date-color: rgba(0, 175, 255, 0.18);
+
+.toolbar {
+    background: #fafafa;
+    height: 50px;
+    padding-left: 15px;
+    padding-bottom: 10px;
+    button {
+        margin-right: 5px;
+    }
+}
+
+.licenses-grid {
+    width: 100%;
+    height: calc(100% - 120px);
+}
+
+.red-outer {
+    background-color: @expired-license-color !important;
+}
+
+.blue-outer {
+    background-color: @license-without-expiry-date-color !important;
+}

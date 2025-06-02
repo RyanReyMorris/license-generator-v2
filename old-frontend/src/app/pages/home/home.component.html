@@ -1,0 +1,36 @@
+<mat-toolbar class="header">
+    <span class="header-title">Лицензии</span>
+    <span class="spacer"></span>
+    <a mat-raised-button href="/taiga">Попробовать новую версию</a>
+    <button (click)="logout()" color="primary" mat-flat-button class="app-button">Выход</button>
+</mat-toolbar>
+<mat-sidenav-container class="sidenav-container">
+
+    <mat-sidenav mode="side" opened disableClose class="aside">
+
+        <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+            <mat-tree-node *matTreeNodeDef="let node" class="tree-element">
+                <div style="padding: 10px 10px 10px 60px;">
+                    <span (click)="changeLicense(node.value)">
+                        {{node.name}}
+                    </span>
+                </div>
+            </mat-tree-node>
+            <mat-tree-node *matTreeNodeDef="let node;when: treeHasChild" class="tree-element">
+                <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.name">
+                    <mat-icon class="mat-icon-rtl-mirror">
+                        {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                    </mat-icon>
+                </button>
+                <span (click)="changeLicense(node.value)">
+                    {{node.name}}
+                </span>
+            </mat-tree-node>
+        </mat-tree>
+
+    </mat-sidenav>
+
+    <mat-sidenav-content class="content-bar">
+        <router-outlet></router-outlet>
+    </mat-sidenav-content>
+</mat-sidenav-container>

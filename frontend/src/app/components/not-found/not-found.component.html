@@ -1,0 +1,16 @@
+<div class="not-found-wrapper">
+  <tui-block-status *ngIf="size$ | async as size">
+    <img
+      alt="not found"
+      src="./assets/camping.svg"
+      tuiSlot="top"
+      class="image"
+    />
+    <h4>Страница не найдена</h4>
+    Ой! Похоже, мы не можем найти нужную вам страницу...
+    <button appearance="secondary" tuiButton [size]="size" (click)="goHome()">
+      Вернуться домой
+    </button>
+  </tui-block-status>
+</div>
+

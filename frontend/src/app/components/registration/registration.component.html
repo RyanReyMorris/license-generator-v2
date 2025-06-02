@@ -1,0 +1,26 @@
+<div class="container">
+  <a textAlign="center" size="l"
+     target="_blank"
+     tuiIsland
+     [hoverable]="true">
+    <h3 class="tui-island__title">Регистрация</h3>
+    <form class="b-form tui-space_top-6" [formGroup]="registrationForm" (ngSubmit)="register()">
+      <div class="tui-form__row">
+        <tui-input formControlName="login" tuiTextfieldSize="l">Логин<input tuiTextfield/></tui-input>
+        <tui-error formControlName="login" [error]="[] | tuiFieldError | async"></tui-error>
+      </div>
+      <div class="tui-form__row">
+        <tui-input-password formControlName="password" tuiTextfieldSize="l">Пароль</tui-input-password>
+        <tui-error formControlName="password" [error]="[] | tuiFieldError | async"></tui-error>
+      </div>
+      <div class="tui-form__buttons">
+        <button size="m" tuiButton type="submit" class="tui-form__button" [disabled]="registrationForm.invalid">
+          Зарегистрироваться
+        </button>
+        <button appearance="flat" size="m" tuiButton type="button" class="tui-form__button" (click)="login()">
+          Войти
+        </button>
+      </div>
+    </form>
+  </a>
+</div>

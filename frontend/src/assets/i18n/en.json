@@ -1,0 +1,27 @@
+{
+  "documents": "Documents",
+  "counterparty": "Counterparty",
+  "template-packages": "Template Packages",
+  "users": "Users",
+  "reports": "Reports",
+  "incidents": "Incidents",
+  "configuration": "Configuration",
+  "admin": "Administration",
+  "audit": "Audit",
+  "attorneys": "Attorneys",
+  "tasks": "Tasks",
+  "directories": "Directories",
+  "accounting": "Accounting",
+  "page-not-found-code" : "404 Not Found",
+  "page-not-found-message" : "The requested page does not exist. You may have entered the wrong address. Contact your administrator.",
+
+  "state": "State",
+  "operatorCode": "Operator code",
+  "type": "Type",
+  "senderName": "Sender",
+  "department": "Department code",
+  "name": "Name",
+  "modified": "Modified",
+  "created": "Created",
+  "description": "Description"
+}

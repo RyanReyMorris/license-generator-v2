@@ -1,0 +1,37 @@
+<div mat-dialog-title>
+    <span>{{licenseGenerationParams.value === null ? 'Создание ключа' : 'Информация о ключе'}}</span>
+    <button class="close-button" mat-icon-button mat-dialog-close>
+        <mat-icon aria-hidden="true">
+            close
+        </mat-icon>
+    </button>
+</div>
+<div class="dialog-content">
+    <mat-form-field class="license-selector" *ngIf="licenseGenerationParams.value === null">
+        <mat-label>Выберите лицензию</mat-label>
+        <mat-select [(value)]="selectedLicense">
+            <mat-option *ngFor="let license of licenses | keyvalue" [value]="license.key">{{license.value}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <perfect-scrollbar>
+        <mat-dialog-content [ngSwitch]="selectedLicense">
+            <ng-template [ngSwitchCase]="licenses.SYSTEM">
+                <app-system-license
+                    (valueChanged)="formValueChanged($event)"
+                    (statusChanged)="formStatusChanged($event)"
+                    [value]="licenseGenerationParams.asObservable()"
+                    [version]="getVersion()">
+                </app-system-license>
+            </ng-template>
+        </mat-dialog-content>
+    </perfect-scrollbar>
+</div>
+<mat-dialog-actions *ngIf="selectedLicense !== null" class="generate-button">
+    <button *ngIf="licenseGenerationParams.value === null" [disabled]="formStatus === 'INVALID'" (click)="generate()"
+        color="primary" mat-flat-button type="submit">
+        Выпустить
+    </button>
+    <button (click)="clearForm()" color="primary" mat-flat-button type="button">
+        {{ data?.licenseGenerationParams || licenseGenerationParams.value ? 'Создать новый' : 'Очистить' }}
+    </button>
+</mat-dialog-actions>

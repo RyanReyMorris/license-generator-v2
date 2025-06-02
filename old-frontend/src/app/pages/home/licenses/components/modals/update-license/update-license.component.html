@@ -1,0 +1,44 @@
+<div mat-dialog-title>
+    <span>Обновление лицензии</span>
+    <button class="close-button" mat-icon-button mat-dialog-close>
+        <mat-icon aria-hidden="true">
+            close
+        </mat-icon>
+    </button>
+</div>
+<div class="dialog-content">
+    <perfect-scrollbar>
+        <mat-dialog-content>
+            <form [formGroup]="form">
+                <div formGroupName="licenseMeta">
+                    <mat-form-field class="full-width">
+                        <input [matDatepicker]="dateOfExpiry" formControlName="dateOfExpiry"
+                               matInput [min]="minDate"
+                               placeholder="Срок действия">
+                        <mat-datepicker-toggle [for]="dateOfExpiry" matSuffix></mat-datepicker-toggle>
+                        <mat-datepicker #dateOfExpiry></mat-datepicker>
+                    </mat-form-field>
+                </div>
+
+                <div formGroupName="files">
+                    <mat-form-field class="full-width">
+                        <ngx-mat-file-input #fileInput [disabled]="!fileInput.empty" formControlName="privateKey" placeholder="Закрытый ключ"></ngx-mat-file-input>
+                        <button class="icon-24" (click)="fileInput.clear($event)" *ngIf="!fileInput.empty" mat-icon-button matSuffix>
+                            <mat-icon>clear</mat-icon>
+                        </button>
+                        <button class="icon-24" *ngIf="fileInput.empty" mat-icon-button matSuffix>
+                            <mat-icon>upload</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </div>
+            </form>
+        </mat-dialog-content>
+    </perfect-scrollbar>
+</div>
+<mat-dialog-actions class="generate-button">
+    <button [disabled]="!form.valid" color="primary" mat-flat-button
+            type="button" (click)="onSubmit(form.value)">
+        Обновить
+    </button>
+</mat-dialog-actions>
+

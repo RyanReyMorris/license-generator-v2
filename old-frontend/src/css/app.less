@@ -1,0 +1,114 @@
+/* You can add global styles to this file, and also import other style files */
+@import '~ag-grid-community/dist/styles/ag-grid.css';
+@import '~ag-grid-community/dist/styles/ag-theme-balham.css';
+@import "~ag-grid-community/dist/styles/ag-theme-material.css";
+@import 'colors.less';
+
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+html {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 0;
+    overflow: auto;
+}
+
+body {
+    overflow: auto;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+.app-button {
+    &:not([disabled]) {
+        &:hover {
+            background-color: var(--primary-hover-color) !important;
+            transition: all 0.05s 0.05s;
+        }
+    }
+}
+
+.custom-mat-dialog-container {
+
+    .mat-dialog-container {
+        display: flex !important;
+        flex-direction: column;
+        padding: 0;
+
+        > * {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+
+            .mat-dialog-title {
+                flex: 0;
+                padding: 12px 12px 4px 25px;
+                margin: 0;
+                background: var(--primary-hover-color);
+                color: var(--primary-text-color);
+                text-shadow: 1px 1px 1px #000;
+                font-weight: 400;
+
+                .close-button {
+                    float: right;
+                    position: relative;
+                    top: -3px;
+                }
+            }
+
+            .dialog-content {
+                flex: 1;
+                padding: 0;
+                overflow: hidden;
+
+                .license-selector {
+                    width: 100%;
+                    padding-top: 20px;
+
+                    .mat-form-field-flex {
+                        padding: 0 25px;
+                    }
+                }
+            }
+
+            .mat-dialog-actions {
+                flex: 0;
+                margin-bottom: 0;
+                padding: 2px;
+                background: #e3e3e3;
+                border-top: 1px solid #949494;
+
+                button {
+                    background: whitesmoke;
+                    color: black;
+                    border: 1px solid darkslategray;
+
+                    &[disabled=true]{
+                        background: #673ab7;
+                        color: white;
+                        opacity: 0.65;
+                        cursor: not-allowed;
+
+                        &:hover {
+                            background: #673ab7;
+                            color: white;
+                        }
+                    }
+
+                    &:hover {
+                        background-color: #ffffff61;
+                        transition: all 0.05s 0.05s;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,8 @@
+<!--Темная тема -->
+<tui-theme-night *ngIf="night | async"></tui-theme-night>
+<!--Изменение палитры -->
+<theme-switcher *ngIf="false"></theme-switcher>
+<!--Главный модуль приложения -->
+<tui-root [tuiMode]="mode">
+  <router-outlet></router-outlet>
+</tui-root>

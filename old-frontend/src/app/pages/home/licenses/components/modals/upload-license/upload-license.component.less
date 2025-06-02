@@ -1,0 +1,80 @@
+.close-button {
+    float: right;
+}
+
+.mat-dialog-content {
+    margin: 0
+}
+
+.uploadfilecontainer {
+    display: flex;
+    flex-direction: row;
+    height: 250px;
+    width: 500px;
+
+    > div {
+        flex: 1;
+        margin: 0 25px;
+        text-align: center;
+    }
+
+    .uploadZone {
+        height: 85%;
+        border: 2px dashed #1C8ADB;
+        border-radius: 10px;
+    }
+
+    .uploadZone:hover {
+        cursor: pointer;
+        background-color: #9ecbec !important;
+        opacity: 0.8;
+    }
+}
+
+.mat-dialog-title {
+    margin: 0;
+}
+
+.licenseStatus {
+    .true {
+        background: #00BD39BD;
+        padding: 15px;
+    }
+
+    .false {
+        background: #FB000DBD;
+        padding: 15px;
+    }
+
+    color: white;
+    font-weight: 400;
+    text-shadow: 0.5px 0.5px 0.5px #48474782;
+    text-align: center;
+    font-size: larger;
+}
+
+.divider {
+    padding-bottom: 10px;
+}
+
+.loaded {
+    height: 85%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    mat-icon {
+        font-size: 60px;
+        color: green;
+        height: 60px;
+        width: 60px;
+    }
+}
+
+.license-selector {
+    width: 100%;
+}
+
+.full-width {
+    width: 100%;
+}

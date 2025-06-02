@@ -1,0 +1,71 @@
+<div mat-dialog-title>
+    <span>Проверить лицензию</span>
+    <button class="close-button" mat-icon-button mat-dialog-close>
+        <mat-icon aria-hidden="true">
+            close
+        </mat-icon>
+    </button>
+</div>
+<div class="dialog-content">
+    <div *ngIf="data.value === null">
+        <mat-form-field class="license-selector">
+            <mat-label>Выберите лицензию</mat-label>
+            <mat-select [(value)]="selectedLicense">
+                <mat-option *ngFor="let license of licenses | keyvalue"
+                            [value]="license.key">{{license.value}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div *ngIf="(data | async)">
+        <div class="licenseStatus">
+            <div class="true" *ngIf="(data | async)?.licenseStatus['status'] === 'true'">
+                {{(data | async)?.licenseStatus['message']}}
+            </div>
+            <div class="false" *ngIf="(data | async)?.licenseStatus['status'] === 'false'">
+                {{(data | async)?.licenseStatus['message']}}
+            </div>
+        </div>
+        <mat-divider class="divider"></mat-divider>
+    </div>
+
+    <perfect-scrollbar>
+        <mat-dialog-content>
+            <div *ngIf="data.value === null" >
+                <div class="uploadfilecontainer">
+                    <div>
+                        <span>Файл лицензии</span>
+                        <div *ngIf="!licenseFile" class="uploadZone" (click)="fileInputL.click()" appDragDrop
+                             (fileDropped)="uploadlicenseFile($event)">
+                            <input hidden type="file" #fileInputL (change)="uploadlicenseFile($event.target.files[0])">
+                        </div>
+                        <div class="loaded" *ngIf="licenseFile">
+                            <mat-icon>done</mat-icon>
+                        </div>
+                    </div>
+                    <div>
+                        <span>Файл открытого ключа</span>
+                        <div *ngIf="!publicKeyFile" class="uploadZone" (click)="fileInputPK.click()" appDragDrop
+                             (fileDropped)="uploadpublicKeyFile($event)">
+                            <input hidden type="file" #fileInputPK
+                                   (change)="uploadpublicKeyFile($event.target.files[0])">
+                        </div>
+                        <div class="loaded" *ngIf="publicKeyFile">
+                            <mat-icon>done</mat-icon>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="data | async">
+                <form readonly>
+                    <ng-container *ngFor="let prop of (data | async)?.decryptedLicense | keyvalue">
+                        <mat-form-field class="full-width">
+                            <input matInput [placeholder]="prop.key | translate" [value]="prop.value" type="text"
+                                   readonly>
+                        </mat-form-field>
+                    </ng-container>
+                </form>
+            </div>
+        </mat-dialog-content>
+    </perfect-scrollbar>
+</div>

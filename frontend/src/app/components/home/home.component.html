@@ -1,0 +1,31 @@
+<div class="wrapper">
+  <h1 class="tui-text_h5 tui-primary-active title">Генератор лицензий</h1>
+  <tui-tabs-with-more class="tabs" [activeItemIndex]="activeItemIndex">
+    <button *tuiItem tuiTab (click)="onClick('Цитрос ЮЗ ЭДО')">
+      <tui-svg src="tuiIconFileTextLarge" class="tui-space_right-2"></tui-svg>
+      Цитрос ЮЗ ЭДО
+    </button>
+    <button *tuiItem tuiTab (click)="onClick('Цитрос Платформа')" disabled>
+      <tui-svg src="tuiIconCodesandboxLarge" class="tui-space_right-2"></tui-svg>
+      Цитрос Платформа
+    </button>
+    <button *tuiItem tuiTab (click)="onClick('Цитрос КЭДО')" disabled>
+      <tui-svg src="tuiIconUserLarge" class="tui-space_right-2"></tui-svg>
+      Цитрос КЭДО
+    </button>
+    <button *tuiItem tuiTab (click)="onClick('Цитрос СЭД')" disabled>
+      <tui-svg src="tuiIconPenToolLarge" class="tui-space_right-2"></tui-svg>
+      Цитрос СЭД
+    </button>
+  </tui-tabs-with-more>
+  <div class="settings" *ngIf="user$ | async as user">
+    <form [formGroup]="toggleForm"><tui-toggle size="l" class="tui-space_right-3" (click)="toggle()" [showIcons]="true" formControlName="nightThemeToggle"></tui-toggle></form>
+    <button icon="tuiIconLogOut" tuiIconButton size="m" tuiSlot="right" (click)="logout()"></button>
+    <tui-avatar [rounded]="false" size="m" text="{{user.username}}" class="tui-space_left-3"></tui-avatar>
+  </div>
+</div>
+
+<div class="content">
+  <app-table></app-table>
+</div>
+

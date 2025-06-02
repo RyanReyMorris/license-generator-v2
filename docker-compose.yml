@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      PGPORT: 5434
+      POSTGRES_USER: license
+      POSTGRES_PASSWORD: o9p0[-]=
+      POSTGRES_DB: license
+    ports:
+      - "5434:5434"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    ports:
+      - "8081:8081"
+      - "5005:5005"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5433/license
+      SPRING_DATASOURCE_USERNAME: license
+      SPRING_DATASOURCE_PASSWORD: o9p0[-]=
+    restart: on-failure
+
+volumes:
+  postgres-data:

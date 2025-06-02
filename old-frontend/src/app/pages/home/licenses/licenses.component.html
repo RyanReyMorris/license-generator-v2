@@ -1,0 +1,23 @@
+<mat-toolbar class="toolbar">
+    <button color="primary" mat-flat-button (click)="createLicense()" class="app-button">Создать</button>
+    <button color="primary" mat-flat-button matTooltipPosition="right" matTooltip="Проверить лицензию" (click)="checkLicense()" class="app-button">
+        <mat-icon>assignment_turned_in</mat-icon>
+    </button>
+    <span class="spacer"></span>
+    <button color="primary" class="app-button" mat-flat-button (click)="this.refreshData()">
+        <mat-icon>refresh</mat-icon>
+    </button>
+</mat-toolbar>
+<ag-grid-angular
+    class="ag-theme-material licenses-grid"
+    [columnDefs]="columnDefs"
+    [defaultColDef]="defaultColDef"
+    [gridOptions]="gridOptions"
+    [rowClassRules]="rowClassRules"
+    [frameworkComponents]="frameworkComponents">
+</ag-grid-angular>
+<app-pagination-toolbar class="ag-theme-material ag-grid" (refresh)="this.refreshData()"
+                        [page]="keys | async"></app-pagination-toolbar>
+
+
+

@@ -1,0 +1,14 @@
+{
+  "id": "ID",
+  "dateOfExpiry": "Дата окончания",
+  "dateOfIssue": "Дата создания",
+  "issuedTo": "Выдан кому",
+  "issuedBy": "Выдан кем",
+  "licenseSignature": "Сигнатура",
+  "signatureDigest": "Шифрование",
+  "organizationsList": "КПП:ИНН организаций",
+  "licenseNumber": "Номер лицензии",
+  "version": "Версия лицензии",
+  "comment": "Комментарий",
+  "testLicense": "Тестовая лицензия"
+}

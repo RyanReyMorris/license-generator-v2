@@ -1,0 +1,40 @@
+@import '@taiga-ui/core/styles/taiga-ui-local.less';
+
+:host {
+  display: block;
+}
+
+.wrapper {
+  height:4rem;
+  box-shadow: var(--tui-shadow-sidebar);
+  display: flex;
+  align-items: center;
+  padding: 0 4rem;
+}
+
+.content{
+  padding: 2rem 4rem;
+  height: calc(100% - 4rem);
+}
+
+.title {
+  width: 20%;
+  color: var(--tui-primary-active)
+}
+
+.settings {
+  align-items:center;
+  display: flex;
+  justify-content: end;
+  width: 10%;
+}
+
+.tabs {
+  width: 70%;
+  justify-content: flex-start;
+  box-shadow: none;
+}
+
+@media @tui-mobile {
+  width: 100%;
+}

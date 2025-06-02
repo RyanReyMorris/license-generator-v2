@@ -1,0 +1,129 @@
+<form [formGroup]="form">
+    <div formGroupName="licenseMeta">
+        <mat-form-field class="full-width" *ngIf="value | async">
+            <input formControlName="id" matInput placeholder="Идентификатор" type="text">
+        </mat-form-field>
+
+        <mat-form-field class="full-width" *ngIf="value | async">
+            <input formControlName="previousLicense" matInput placeholder="Предыдущий Идентификатор лицензии"
+                type="text">
+        </mat-form-field>
+
+        <mat-form-field class="full-width" *ngIf="value | async">
+            <input [matDatepicker]="dateOfIssue" formControlName="dateOfIssue" matInput placeholder="Дата выпуска">
+            <mat-datepicker #dateOfIssue></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <input [matDatepicker]="dateOfExpiry" formControlName="dateOfExpiry" matInput placeholder="Срок действия">
+            <mat-datepicker-toggle *ngIf="(value | async) === null" [for]="dateOfExpiry" class="icon-24" matSuffix>
+            </mat-datepicker-toggle>
+            <mat-datepicker #dateOfExpiry></mat-datepicker>
+        </mat-form-field>
+
+        <div formGroupName="properties">
+            <mat-form-field class="full-width">
+                <input matInput type="text" readonly disabled placeholder="Версия" [value]="version">
+            </mat-form-field>
+
+            <mat-form-field class="full-width">
+                <input [errorStateMatcher]="matcher" formControlName="issuedTo" matInput placeholder="Кому выдана"
+                    type="text">
+            </mat-form-field>
+
+            <mat-form-field class="full-width">
+                <input [errorStateMatcher]="matcher" formControlName="issuedBy" matInput placeholder="Кем выдана"
+                    type="text" [matAutocomplete]="auto">
+                <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                       {{option}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field class="full-width">
+                <mat-chip-list [errorStateMatcher]="matcher" placeholder="Организации" #chipList
+                    formControlName="organizationsList">
+                    <mat-chip *ngFor="let innkpp of organizationsList.value" [selectable]="false"
+                        [removable]="removable" (removed)="remove(innkpp)">
+                        <span class="noselect">ИНН:</span>{{getInn(innkpp)}}
+                        &nbsp;
+                        <span class="noselect">КПП:</span>{{getKpp(innkpp)}}
+                        <mat-icon *ngIf="(value | async) === null" matChipRemove class="noselect">cancel</mat-icon>
+                    </mat-chip>
+                    <input placeholder="Организации" [matChipInputFor]="chipList" [matChipInputAddOnBlur]="addOnBlur"
+                           (matChipInputTokenEnd)="addFromInput($event)"
+                           [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                           (paste)="addFromBuffer($event)"
+                           formControlName="organizationsInput"
+                           autocomplete="off"
+                           [value]="organizationsInput"
+                        >
+                    <button *ngIf="(value | async) === null" (click)="this.innkppActive = !this.innkppActive;"
+                        type="button" mat-icon-button>
+                        <mat-icon aria-hidden="true">
+                            {{innkppActive ? 'expand_less' : 'expand_more'}}
+                        </mat-icon>
+                    </button>
+                </mat-chip-list>
+            </mat-form-field>
+
+            <div *ngIf="innkppActive && (value | async) === null" [@openCloseInnKpp]>
+                <form [formGroup]="innkppForm" (ngSubmit)="addFromForm(innkppForm.value)">
+                    <mat-card class="full-width innkppExpanded">
+                        <mat-form-field>
+                            <input formControlName="inn" placeholder="ИНН" type="text" matInput>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input formControlName="kpp" placeholder="КПП" type="text" matInput>
+                        </mat-form-field>
+                        <button type="submit" mat-icon-button [disabled]="innkppForm.invalid" matSuffix>
+                            <mat-icon aria-hidden="true">
+                                add
+                            </mat-icon>
+                        </button>
+                    </mat-card>
+                </form>
+            </div>
+
+            <mat-form-field class="full-width" *ngIf="(value | async) !== null">
+                <input matInput placeholder="Номер лицензии" type="text"
+                    [value]="(value | async).properties['licenseNumber']" readonly disabled>
+            </mat-form-field>
+
+            <mat-form-field class="full-width">
+                <textarea [errorStateMatcher]="matcher" formControlName="comment" matInput [cdkTextareaAutosize]="true"
+                    [cdkAutosizeMinRows]="1" [cdkAutosizeMaxRows]="5" placeholder="Комментарий" type="text"></textarea>
+            </mat-form-field>
+
+            <mat-slide-toggle class="full-width testLicense" formControlName="testLicense">Тестовая лицензия
+            </mat-slide-toggle>
+        </div>
+    </div>
+
+    <div formGroupName="files" *ngIf="(value | async) === null">
+        <mat-form-field class="full-width">
+            <ngx-mat-file-input #privateKeyInput [disabled]="!privateKeyInput.empty" formControlName="privateKey"
+                placeholder="Закрытый ключ"></ngx-mat-file-input>
+            <button class="icon-24" (click)="privateKeyInput.clear($event)" *ngIf="!privateKeyInput.empty"
+                mat-icon-button matSuffix>
+                <mat-icon>clear</mat-icon>
+            </button>
+            <button class="icon-24" *ngIf="privateKeyInput.empty" mat-icon-button matSuffix>
+                <mat-icon>upload</mat-icon>
+            </button>
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <ngx-mat-file-input #publicKeyInput [disabled]="!publicKeyInput.empty" formControlName="publicKey"
+                placeholder="Публичный ключ"></ngx-mat-file-input>
+            <button class="icon-24" (click)="publicKeyInput.clear($event)" *ngIf="!publicKeyInput.empty" mat-icon-button
+                matSuffix>
+                <mat-icon>clear</mat-icon>
+            </button>
+            <button class="icon-24" *ngIf="publicKeyInput.empty" mat-icon-button matSuffix>
+                <mat-icon>upload</mat-icon>
+            </button>
+        </mat-form-field>
+    </div>
+</form>
